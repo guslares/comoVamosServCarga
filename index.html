@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Registro de Alumnos</title>
+</head>
+<style>
+  body {
+    font-size: 13px;
+    background-color: #def0ec;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Contenedor del título */
+  .form-title {
+    padding: 15px 15px 5px 15px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+  }
+
+  /* Contenedor principal usando Flexbox para alineación perfecta */
+  .form-row-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px; /* Espacio uniforme entre columnas */
+    padding: 0 15px 15px 15px;
+  }
+
+  /* Control de anchos específicos por columna */
+  .col-asesor   { flex: 2 1 200px; } 
+  .col-legajo   { flex: 1.2 1 120px; }
+  .col-modalidad { flex: 1.2 1 130px; }
+  .col-periodo   { flex: 1.2 1 130px; }
+  .col-pago      { flex: 2 1 220px; } 
+  .col-btn       { flex: 0 0 auto; }  
+
+  /* Normalización de los elementos internos */
+  .form-row-container .input-field {
+    margin: 0 !important;
+    width: 100%;
+  }
+
+  .form-row-container .input-field input {
+    margin-bottom: 0 !important;
+    height: 3rem !important;
+  }
+
+  /* Estilización sutil para los selectores nativos */
+  .browser-default {
+    height: 3rem !important;
+    border: 1px solid #9e9e9e !important;
+    border-radius: 4px !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  /* Ajuste de altura del botón de envío para emparejar con inputs */
+  .btn-submit {
+    height: 3rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+<body style="background-color:#def0ec">
+  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTtr-BifJnw0wjtPiqa3wbA-Dwq3KtAFALpInjhpUSnEsu6pNclRGlU8luArvDEUw9ZXIMvwGHpwTAc/pubhtml?gid=6273019&single=true" width="100%" height="570" frameborder="0"></iframe>
+
+ <form id="formularioAlumno">
+    <div class="form-title">Completa los datos para registros un nuevo Reinscripto</div>
+    
+    <div class="form-row-container">
+      
+      <div class="col-asesor">
+        <div class="input-field">
+          <input id="informador" type="text" class="autocomplete" disabled>
+          <label for="informador">Nombre de Asesor</label>
+        </div>
+      </div>
+
+      <div class="col-legajo">
+        <div class="input-field">
+          <input id="legajo" type="text" class="validate">
+          <label for="legajo">Legajo alumno</label>
+        </div>
+      </div>
+
+      <div class="col-modalidad">
+        <select class="browser-default validate" id="Tipo de Alumno">
+          <option value="" disabled selected>Seleccionar</option>
+          <option value="RI">RI</option>
+          <option value="RECUPERO">RECUPERO</option>
+          <option value="POSGRADOS">POSGRADOS</option>
+          <option value="CAU VIRTUAL">CAU VIRTUAL</option>
+        </select>
+      </div>
+
+      <div class="col-periodo">
+        <select class="browser-default" id="periodo">
+          <option value="" disabled selected>Cargando Periodos...</option>
+        </select>
+      </div>
+
+      <div class="col-pago">
+        <select class="browser-default" id="formaPago">
+          <option value="" disabled selected>Seleccion forma pago</option>
+          <option value="Cupón de pago">Cupón de pago</option>
+          <option value="Mercado pago debito">Mercado pago debito</option>
+          <option value="Mercado pago crédito">Mercado pago crédito</option>
+          <option value="T. Crédito pago electrónico">T. Crédito pago electrónico</option>
+          <option value="Débito pago electrónico">Débito pago electrónico</option>
+          <option value="Posnet T. crédito">Posnet crédito</option>
+          <option value="Pago a cuenta por cualquier medio">Pago a cuenta por cualquier medio</option>
+        </select>
+      </div>
+
+      <div class="col-btn">
+        <div class="btn waves-effect waves-light btn-submit" id="btn">
+          <i class="material-icons">send</i>
+        </div>
+      </div>
+
+      <div style="z-index:1000" id="modal1" class="modal">
+        <div class="modal-content">
+          <h6 id="datos">Cargando interfaz...</h6>
+        </div>
+      </div>
+
+    </div>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  
+  <script>
+    const URL_GOOGLE_WEB_APP = "https://script.google.com/macros/s/AKfycbxM0E1eNEIyXEq2LxnJiSVoISO941Q0-gqVh0BnKP6skYPdnvqYm53yOAT-PTPBbAnXyw/exec"; 
+
+    let modalInstance;
+    const btnEnviar = document.getElementById("btn");
+    const txtDatosModal = document.getElementById("datos");
+    const modalElement = document.getElementById("modal1");
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const modales = document.querySelectorAll('.modal');
+      modalInstance = M.Modal.init(modales)[0];
+
+      const selects = document.querySelectorAll('select:not(.browser-default)');
+      if(selects.length > 0) M.FormSelect.init(selects);
+
+      cargarListasIniciales();
+    });
+
+    btnEnviar.addEventListener("click", enviarFormulario);
+
+    function mostrarMensajeModal(mensaje) {
+      txtDatosModal.innerHTML = mensaje;
+      if (modalInstance) modalInstance.open();
+    }
+
+    function cargarListasIniciales() {
+      fetch(`${URL_GOOGLE_WEB_APP}?action=getIniciales`)
+        .then(response => response.json())
+        .then(data => {
+          // Cargar Selector Periodos
+          const selectPeriodo = document.getElementById("periodo");
+          selectPeriodo.innerHTML = '<option value="" disabled selected>Periodo</option>' + data.periodosHtml;
+          
+          // Inicializar Autocomplete de Asesores
+          const inputInformador = document.getElementById('informador');
+          inputInformador.removeAttribute('disabled');
+          const autocompleteElem = document.querySelectorAll('.autocomplete');
+          M.Autocomplete.init(autocompleteElem, { data: data.informadoresJson });
+        })
+        .catch(err => {
+          console.error("Error al cargar datos iniciales de Google Apps Script:", err);
+          mostrarMensajeModal("Error de conexión con la base de datos de Google.");
+        });
+    }
+
+    function enviarFormulario() {
+      const payload = {
+        informador: document.getElementById("informador").value.trim(),
+        legajo: document.getElementById("legajo").value.trim(),
+        modalidad: document.getElementById("modalidad").value,
+        periodo: document.getElementById("periodo").value,
+        formaPago: document.getElementById("formaPago").value
+      };
+
+      // Validaciones Estrictas de Negocio
+      if (payload.informador === "") return mostrarMensajeModal("Falta tu nombre de Asesor");
+      if (payload.legajo === "") return mostrarMensajeModal("Falta el legajo del alumno");
+      if (payload.modalidad === "") return mostrarMensajeModal("Falta la modalidad del alumno");
+      if (payload.periodo === "") return mostrarMensajeModal("Falta el periodo de ingreso");
+      if (payload.formaPago === "") return mostrarMensajeModal("Falta la forma de pago");
+
+      // Bloqueo de UI para mitigar el doble click accidental
+      mostrarMensajeModal("Guardando datos en la nube...");
+      btnEnviar.style.pointerEvents = "none";
+      btnEnviar.style.opacity = "0.5";
+
+      fetch(URL_GOOGLE_WEB_APP, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'text/plain' }, 
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(res => {
+        if (res.status === 0 || res.resultado == 0) {
+          mostrarMensajeModal("Ya se reportó el legajo del alumno.");
+        } else {
+          mostrarMensajeModal("¡Datos guardados exitosamente!");
+          document.getElementById("formularioAlumno").reset();
+          M.updateTextFields();
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        mostrarMensajeModal("Hubo un error al procesar la solicitud, reintente por favor.");
+      })
+      .finally(() => {
+        setTimeout(() => {
+          btnEnviar.style.pointerEvents = "auto";
+          btnEnviar.style.opacity = "1";
+        }, 2500);
+      });
+    }
+
+  setTimeout(() => {location.reload()
+        
+    }, 120000);
+  </script>
+</body>
+
+</html>
