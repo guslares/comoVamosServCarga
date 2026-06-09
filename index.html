@@ -107,7 +107,7 @@
         </select>
       </div>
 
-      <div class="col-pago">
+      <!-- <div class="col-pago">
         <select class="browser-default" id="formaPago">
           <option value="" disabled selected>Seleccion forma pago</option>
           <option value="Cupón de pago">Cupón de pago</option>
@@ -116,9 +116,9 @@
           <option value="T. Crédito pago electrónico">T. Crédito pago electrónico</option>
           <option value="Débito pago electrónico">Débito pago electrónico</option>
           <option value="Posnet T. crédito">Posnet crédito</option>
-          <option value="Pago a cuenta por cualquier medio">Pago a cuenta por cualquier medio</option>
+         */ <option value="Pago a cuenta por cualquier medio">Pago a cuenta por cualquier medio</option>
         </select>
-      </div>
+      </div> -->
 
       <div class="col-btn">
         <div class="btn waves-effect waves-light btn-submit" id="btn">
@@ -188,7 +188,7 @@
         legajo: document.getElementById("legajo").value.trim(),
         modalidad: document.getElementById("tipoDeAlumno").value,
         periodo: document.getElementById("periodo").value,
-        formaPago: document.getElementById("formaPago").value
+        // formaPago: document.getElementById("formaPago").value
       };
 
       // Validaciones Estrictas de Negocio
@@ -196,7 +196,7 @@
       if (payload.legajo === "") return mostrarMensajeModal("Falta el legajo del alumno");
       if (payload.modalidad === "") return mostrarMensajeModal("Falta la modalidad del alumno");
       if (payload.periodo === "") return mostrarMensajeModal("Falta el periodo de ingreso");
-      if (payload.formaPago === "") return mostrarMensajeModal("Falta la forma de pago");
+      // if (payload.formaPago === "") return mostrarMensajeModal("Falta la forma de pago");
 
       // Bloqueo de UI para mitigar el doble click accidental
       mostrarMensajeModal("Guardando datos en la nube...");
