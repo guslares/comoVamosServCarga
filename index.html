@@ -93,7 +93,7 @@
       </div>
 
       <div class="col-modalidad">
-        <select class="browser-default validate" id="Tipo de Alumno">
+        <select class="browser-default validate" id="tipoDeAlumno">
           <option value="" disabled selected>Seleccionar</option>
           <option value="RI">RI</option>
           <option value="RECUPERO">RECUPERO</option>
@@ -186,7 +186,7 @@
       const payload = {
         informador: document.getElementById("informador").value.trim(),
         legajo: document.getElementById("legajo").value.trim(),
-        modalidad: document.getElementById("modalidad").value,
+        modalidad: document.getElementById("tipoDeAlumno").value,
         periodo: document.getElementById("periodo").value,
         formaPago: document.getElementById("formaPago").value
       };
